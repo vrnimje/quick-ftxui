@@ -66,8 +66,7 @@ struct button {
 
 struct input {
     std::string placeholder;
-    std::string temp;
-    std::string option;
+    std::string value;
 };
 
 struct slider {
@@ -117,8 +116,7 @@ inline std::ostream &operator<<(std::ostream &out, button b) {
 
 // print function for debugging
 inline std::ostream &operator<<(std::ostream &out, input b) {
-    out << "Placeholder: " << b.placeholder << " | Temp: " << b.temp
-        << " | Options: " << b.option;
+    out << "Placeholder: " << b.placeholder << " | Temp: " << b.value;
     return out;
 }
 
@@ -154,8 +152,7 @@ BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::button,
 
 BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::input,
                           (std::string, placeholder)
-                          (std::string, temp)
-                          (std::string, option)
+                          (std::string, value)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::slider,
@@ -325,12 +322,19 @@ struct node_printer : boost::static_visitor<> {
             data->components.push_back(ftxui::Slider(text.label,
                                                  (int *)(&It->second), text.min,
                                                  text.max, text.increment));
+        } else {
+            throw std::runtime_error("Variable " + text.value + " not found");
         }
     }
 
     void operator()(quick_ftxui_ast::input const &text) const {
         tab(indent + tabsize);
         std::cout << "input: " << text << std::endl;
+        if (auto It = interpreter::strings.find(std::string(text.value)); It != interpreter::strings.end()) {
+            data->components.push_back(ftxui::Input(&It->second, text.placeholder));
+        } else {
+            throw std::runtime_error("Variable " + text.value + " not found");
+        }
     }
 
     void operator()(quick_ftxui_ast::menu const &text) const {
@@ -448,7 +452,7 @@ struct parser
                        button_function >> -(',' >> buttonopt_kw) >> '}';
 
         input_comp %= qi::lit("Input") >> '{' >> quoted_string >> ',' >>
-                      quoted_string >> ',' >> quoted_string >> '}';
+                      identifier >> '}';
 
         slider_comp %= qi::lit("Slider") >> '{' >> quoted_string >> ',' >>
                        identifier >> ',' >> qi::int_ >> ',' >> qi::int_ >> ',' >>
