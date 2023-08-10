@@ -68,6 +68,12 @@ int main(int argc, char **argv) {
             }
             }
         }
+        for (auto It: client::interpreter::numbers) {
+            std::cout << "int " <<  It.first << ": " << It.second << "\n";
+        }
+        for (auto It: client::interpreter::strings) {
+            std::cout << "str " <<  It.first << ": " << It.second << "\n";
+        }
     } else {
         std::cout << "-------------------------\n";
         std::cout << "Parsing failed\n";

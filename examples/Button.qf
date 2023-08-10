@@ -1,4 +1,6 @@
 Vertical{
+    int x = 5
+    str y = "Test"
     Button{
         "Button1",
         "Exit",

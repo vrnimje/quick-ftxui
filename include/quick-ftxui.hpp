@@ -24,6 +24,16 @@ namespace client {
 namespace qi = boost::spirit::qi;
 namespace ascii = boost::spirit::ascii;
 
+namespace interpreter {
+///////////////////////////////////////////////////////////////////////////
+//  Variables (Wooahhh)
+//////////////////////////////////////////////////////////////////////////
+
+std::map<std::string, int> numbers;
+std::map<std::string, std::string> strings;
+
+}
+
 namespace quick_ftxui_ast {
 ///////////////////////////////////////////////////////////////////////////
 //  The AST
@@ -35,6 +45,8 @@ struct input;
 struct slider;
 struct menu;
 struct toggle;
+struct int_variable_decl;
+struct str_variable_decl;
 
 enum block_alignment { VERTICAL, HORIZONTAL };
 enum button_option { Ascii, Animated, Simple, NoOpt };
@@ -42,8 +54,9 @@ enum button_option { Ascii, Animated, Simple, NoOpt };
 typedef boost::variant<
     nil, boost::recursive_wrapper<button>, boost::recursive_wrapper<input>,
     boost::recursive_wrapper<slider>, boost::recursive_wrapper<menu>,
-    boost::recursive_wrapper<toggle>, boost::recursive_wrapper<expression>>
-    node;
+    boost::recursive_wrapper<toggle>, boost::recursive_wrapper<expression>,
+    boost::recursive_wrapper<int_variable_decl>, 
+    boost::recursive_wrapper<str_variable_decl>> node;
 
 struct button {
     std::string placeholder;
@@ -59,7 +72,7 @@ struct input {
 
 struct slider {
     std::string label;
-    int value;
+    std::string value;
     int min;
     int max;
     int increment;
@@ -73,6 +86,16 @@ struct menu {
 struct toggle {
     std::vector<std::string> entries;
     int selected;
+};
+
+struct int_variable_decl {
+    std::string identifier;
+    int value = 0;
+};
+
+struct str_variable_decl {
+    std::string identifier;
+    std::string value = "";
 };
 
 struct expression {
@@ -106,6 +129,18 @@ inline std::ostream &operator<<(std::ostream &out, slider b) {
     return out;
 }
 
+inline std::ostream &operator<<(std::ostream &out, int_variable_decl b) {
+    out << "Data Type: int" << " | Identifier: "
+        << b.identifier << " | Value: " << b.value ;
+    return out;
+}
+
+inline std::ostream &operator<<(std::ostream &out, str_variable_decl b) {
+    out << "Data Type: string" << " | Identifier: "
+        << b.identifier << " | Value: " << b.value ;
+    return out;
+}
+
 } // namespace quick_ftxui_ast
 } // namespace client
 
@@ -125,7 +160,7 @@ BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::input,
 
 BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::slider,
                           (std::string, label)
-                          (int, value)
+                          (std::string, value)
                           (int, min)
                           (int, max)
                           (int, increment)
@@ -141,10 +176,22 @@ BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::toggle,
                           (int, selected)
 )
 
+BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::int_variable_decl,
+                          (std::string, identifier)
+                          (int, value)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::str_variable_decl,
+                          (std::string, identifier)
+                          (std::string, value)
+)
+
 BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::expression,
                           (client::quick_ftxui_ast::block_alignment, align)
                           (std::list<client::quick_ftxui_ast::node>, expr)
 )
+
+
 
 // clang-format on
 
@@ -252,7 +299,7 @@ struct node_printer : boost::static_visitor<> {
                 std::unique_ptr<FILE, decltype(&_pclose)> _pipe(
                     _popen(str, "r"), _pclose);
             }));
-#else
+#elif defined(__linux__) || defined(__APPLE__)
             data->components.push_back(ftxui::Button(text.placeholder, [&] {
                 int pid = getpid();
                 std::string temp_path =
@@ -264,6 +311,8 @@ struct node_printer : boost::static_visitor<> {
                 std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(str, "r"),
                                                               pclose);
             }));
+#else 
+            throw std::runtime_error("System Architecture not detected, system calls unavailable");
 #endif
         }
     }
@@ -271,9 +320,12 @@ struct node_printer : boost::static_visitor<> {
     void operator()(quick_ftxui_ast::slider const &text) const {
         tab(indent + tabsize);
         std::cout << "slider" << text << std::endl;
-        data->components.push_back(ftxui::Slider(text.label,
-                                                 (int *)(&text.value), text.min,
+
+        if (auto It = interpreter::numbers.find(std::string(text.value)); It != interpreter::numbers.end()) {
+            data->components.push_back(ftxui::Slider(text.label,
+                                                 (int *)(&It->second), text.min,
                                                  text.max, text.increment));
+        }
     }
 
     void operator()(quick_ftxui_ast::input const &text) const {
@@ -296,6 +348,18 @@ struct node_printer : boost::static_visitor<> {
     void operator()(quick_ftxui_ast::nil const &text) const {
         tab(indent + tabsize);
         std::cout << "nil: \"" << text << '"' << std::endl;
+    }
+
+    void operator()(quick_ftxui_ast::int_variable_decl const &text) const {
+        tab(indent + tabsize);
+        interpreter::numbers.insert_or_assign(text.identifier, text.value);
+        std::cout << "Integer variable decl: " << text << std::endl;
+    }
+
+    void operator()(quick_ftxui_ast::str_variable_decl const &text) const {
+        tab(indent + tabsize);
+        interpreter::strings.insert_or_assign(text.identifier, text.value);
+        std::cout << "String variable decl: " << text << std::endl;
     }
 
     int indent;
@@ -345,6 +409,9 @@ struct parser
     parser() : parser::base_type(expression) {
         qi::char_type char_;
         qi::uint_type uint_;
+        qi::raw_type raw;
+        qi::alpha_type alpha;
+        qi::alnum_type alnum;
         qi::_2_type _2;
         qi::_3_type _3;
         qi::_4_type _4;
@@ -369,6 +436,11 @@ struct parser
 
         quoted_string %= qi::lexeme['"' >> +(char_ - '"') >> '"'];
 
+        identifier =
+                !qi::lexeme[!(alnum | '_')]
+            >>  raw[qi::lexeme[(alpha | '_') >> *(alnum | '_')]]
+            ;
+
         button_function =
             qi::lit("System") >> "(" >> quoted_string >> ")" | quoted_string;
 
@@ -379,7 +451,7 @@ struct parser
                       quoted_string >> ',' >> quoted_string >> '}';
 
         slider_comp %= qi::lit("Slider") >> '{' >> quoted_string >> ',' >>
-                       qi::int_ >> ',' >> qi::int_ >> ',' >> qi::int_ >> ',' >>
+                       identifier >> ',' >> qi::int_ >> ',' >> qi::int_ >> ',' >>
                        qi::int_ >> '}';
 
         menu_comp %= qi::lit("Menu") >> '{' >> '[' >> *quoted_string >> ']' >>
@@ -388,8 +460,12 @@ struct parser
         toggle_comp %= qi::lit("Toggle") >> '{' >> '[' >> *quoted_string >>
                        ']' >> ',' >> qi::int_ >> '}';
 
+        int_var_decl %= qi::lit("int") >> identifier >> -('=' > qi::int_);
+
+        str_var_decl %= qi::lit("str") >> identifier >> -('=' > quoted_string); 
+
         node = button_comp | input_comp | slider_comp | menu_comp |
-               toggle_comp | expression;
+               toggle_comp | int_var_decl | str_var_decl | expression;
 
         expression = alignment_kw >> '{' >> *node >> '}';
 
@@ -412,8 +488,12 @@ struct parser
     qi::rule<Iterator, std::string(), ascii::space_type> button_function;
     qi::rule<Iterator, quick_ftxui_ast::slider(), ascii::space_type>
         slider_comp;
+    qi::rule<Iterator, std::string(), ascii::space_type> identifier;
+    qi::rule<Iterator, quick_ftxui_ast::int_variable_decl(), ascii::space_type> int_var_decl;
+    qi::rule<Iterator, quick_ftxui_ast::str_variable_decl(), ascii::space_type> str_var_decl;
     qi::symbols<char, quick_ftxui_ast::block_alignment> alignment_kw;
     qi::symbols<char, quick_ftxui_ast::button_option> buttonopt_kw;
+    
 };
 } // namespace quick_ftxui_parser
 
