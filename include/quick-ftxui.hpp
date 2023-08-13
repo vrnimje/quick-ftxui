@@ -20,6 +20,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <map>
 
 namespace client {
 namespace qi = boost::spirit::qi;
@@ -27,7 +28,7 @@ namespace ascii = boost::spirit::ascii;
 
 namespace interpreter {
 ///////////////////////////////////////////////////////////////////////////
-//  Variables (Wooahhh)
+//  Variables 
 //////////////////////////////////////////////////////////////////////////
 
 std::map<std::string, int> numbers;
