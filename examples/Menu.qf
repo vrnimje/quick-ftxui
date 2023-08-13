@@ -1,8 +1,14 @@
 Vertical
 {
+    int x
     Menu{
         [ "Physics"  "Maths"  "Chemistry"  "Biology"],
-        0
+        x
+    }
+    int y
+    Toggle {
+        [ "On" "Off" ],
+        y
     }
     Button{
         "Button2",

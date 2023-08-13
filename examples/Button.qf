@@ -1,34 +1,28 @@
 Vertical{
     int x = 5
     str y = "Test"
+    str z = "init"
+    str a
     Input {
-        "Hunku dori",
+        "Type something...",
         y
     }
-    Button{
-        "Button1",
-        "Exit",
-        Simple
-    }
-    Button{
-        "Button2",
-        "Exit",
-        Animated
+    Slider {
+        "Test: ",
+        x,
+        0,
+        100,
+        2
     }
     Button{
         "ls",
-        System("ls -l")
+        System("ls -a"),
+        Ascii,
+        z
     }
-    Horizontal{
-        Button{
-            "Button3",
-            "Exit",
-            Ascii
-        }
-        Button{
-            "Button4",
-            "Exit"
-        }
+    Button {
+        "Exit",
+        "Exit"
     }
 }
 

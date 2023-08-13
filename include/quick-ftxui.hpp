@@ -17,6 +17,7 @@
 #include "ftxui/util/ref.hpp" // for Ref
 
 #include <filesystem>
+#include <fstream>
 #include <iostream>
 #include <string>
 
@@ -62,6 +63,7 @@ struct button {
     std::string placeholder;
     std::string func;
     button_option opt = button_option::NoOpt;
+    std::string output;
 };
 
 struct input {
@@ -79,12 +81,12 @@ struct slider {
 
 struct menu {
     std::vector<std::string> entries;
-    int selected = 0;
+    std::string selected;
 };
 
 struct toggle {
     std::vector<std::string> entries;
-    int selected;
+    std::string selected;
 };
 
 struct int_variable_decl {
@@ -110,7 +112,7 @@ inline std::ostream &operator<<(std::ostream &out, nil) {
 
 // print function for debugging
 inline std::ostream &operator<<(std::ostream &out, button b) {
-    out << "Placeholder: " << b.placeholder << " | Func: " << b.func;
+    out << "Placeholder: " << b.placeholder << " | Func: " << b.func << " | Var: " << b.output;
     return out;
 }
 
@@ -128,14 +130,12 @@ inline std::ostream &operator<<(std::ostream &out, slider b) {
 }
 
 inline std::ostream &operator<<(std::ostream &out, int_variable_decl b) {
-    out << "Data Type: int" << " | Identifier: "
-        << b.identifier << " | Value: " << b.value ;
+    out << " | Identifier: " << b.identifier << " | Value: " << b.value ;
     return out;
 }
 
 inline std::ostream &operator<<(std::ostream &out, str_variable_decl b) {
-    out << "Data Type: string" << " | Identifier: "
-        << b.identifier << " | Value: " << b.value ;
+    out << " | Identifier: " << b.identifier << " | Value: " << b.value ;
     return out;
 }
 
@@ -148,6 +148,7 @@ BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::button,
                           (std::string, placeholder)
                           (std::string, func)
                           (client::quick_ftxui_ast::button_option, opt)
+                          (std::string, output)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::input,
@@ -165,12 +166,12 @@ BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::slider,
 
 BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::menu,
                           (std::vector<std::string>, entries)
-                          (int, selected)
+                          (std::string, selected)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::toggle,
                           (std::vector <std::string> , entries)
-                          (int, selected)
+                          (std::string, selected)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(client::quick_ftxui_ast::int_variable_decl,
@@ -209,7 +210,6 @@ void tab(int indent) {
 struct component_meta_data {
     ftxui::ScreenInteractive *screen;
     ftxui::Components components;
-    ftxui::ButtonOption *options;
 };
 
 struct ast_printer {
@@ -253,61 +253,73 @@ struct node_printer : boost::static_visitor<> {
         tab(indent + tabsize);
         std::cout << "button: " << text << std::endl;
 
-        if (text.func == "Exit") {
-            switch (text.opt) {
+        ftxui::ButtonOption button_opt;
+
+        switch (text.opt) {
             case quick_ftxui_ast::button_option::Ascii: {
-                data->components.push_back(ftxui::Button(
-                    text.placeholder, data->screen->ExitLoopClosure(),
-                    data->options->Ascii()));
+                button_opt = ftxui::ButtonOption::Ascii();
                 break;
             }
             case quick_ftxui_ast::button_option::Animated: {
-                data->components.push_back(ftxui::Button(
-                    text.placeholder, data->screen->ExitLoopClosure(),
-                    data->options->Animated()));
+                button_opt = ftxui::ButtonOption::Animated();
                 break;
             }
             case quick_ftxui_ast::button_option::Simple: {
-                data->components.push_back(ftxui::Button(
-                    text.placeholder, data->screen->ExitLoopClosure(),
-                    data->options->Simple()));
+                button_opt = ftxui::ButtonOption::Simple();
                 break;
             }
             case quick_ftxui_ast::button_option::NoOpt: {
-                data->components.push_back(ftxui::Button(
-                    text.placeholder, data->screen->ExitLoopClosure(),
-                    data->options->Simple()));
+                button_opt = ftxui::ButtonOption::Simple();
                 break;
             }
             default:
                 throw std::runtime_error("Should never reach here");
                 break;
             }
+
+        if (text.func == "Exit") {
+            data->components.push_back(ftxui::Button(
+                    text.placeholder, data->screen->ExitLoopClosure(), button_opt));
         } else {
+            std::string file_op_path;
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
             data->components.push_back(ftxui::Button(text.placeholder, [&] {
                 int pid = _getpid();
-                std::string temp_path =
-                    std::filesystem::temp_directory_path().string();
+                std::string temp_path = std::filesystem::temp_directory_path().string();
                 std::string x = text.func + " 2>>" + temp_path +
                                 "/quick-ftxui-" + std::to_string(pid) +
                                 ".txt 1>&2";
-                const char *str = x.c_str();
-                std::unique_ptr<FILE, decltype(&_pclose)> _pipe(
-                    _popen(str, "r"), _pclose);
-            }));
+                std::unique_ptr<FILE, decltype(&_pclose)> _pipe(_popen(x.c_str(), "r"), _pclose);
+                if (auto It = interpreter::strings.find(std::string(text.output)); It != interpreter::strings.end()) {
+                    std::ifstream f(temp_path + "/quick-ftxui-" + std::to_string(pid) + ".txt");
+                    if(f) {
+                        std::ostringstream ss;
+                        ss << f.rdbuf(); // reading data
+                        interpreter::strings[It->first] = ss.str();
+                    }
+                } else {
+                    throw std::runtime_error("Variable " + text.output + " not found");
+                }
+            }, button_opt));
+
 #elif defined(__linux__) || defined(__APPLE__)
             data->components.push_back(ftxui::Button(text.placeholder, [&] {
                 int pid = getpid();
-                std::string temp_path =
-                    std::filesystem::temp_directory_path().string();
+                std::string temp_path = std::filesystem::temp_directory_path().string();
                 std::string x = text.func + " 2>>" + temp_path +
                                 "/quick-ftxui-" + std::to_string(pid) +
                                 ".txt 1>&2";
-                const char *str = x.c_str();
-                std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(str, "r"),
+                std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(x.c_str(), "r"),
                                                               pclose);
-            }));
+                std::fstream f(temp_path + "/quick-ftxui-" + std::to_string(pid) + ".txt");
+                f.seekg(0, std::ios::beg);
+                if (auto It = interpreter::strings.find(std::string(text.output)); It != interpreter::strings.end()) {
+                    std::string str((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+                    interpreter::strings[It->first] = str;
+                } else {
+                    throw std::runtime_error("Variable " + text.output + " not found");
+                }
+            }, button_opt));
 #else 
             throw std::runtime_error("System Architecture not detected, system calls unavailable");
 #endif
@@ -339,14 +351,23 @@ struct node_printer : boost::static_visitor<> {
 
     void operator()(quick_ftxui_ast::menu const &text) const {
         tab(indent + tabsize);
-        data->components.push_back(
-            ftxui::Menu(&text.entries, (int *)&text.selected));
+
+        if (auto It = interpreter::numbers.find(std::string(text.selected)); It != interpreter::numbers.end()) {
+           data->components.push_back(
+            ftxui::Menu(&text.entries, (int *)(&It->second)));
+        } else {
+            throw std::runtime_error("Variable " + text.selected + " not found");
+        }
     }
 
     void operator()(quick_ftxui_ast::toggle const &text) const {
         tab(indent + tabsize);
-        data->components.push_back(
-            ftxui::Toggle(&text.entries, (int *)&text.selected));
+        if (auto It = interpreter::numbers.find(std::string(text.selected)); It != interpreter::numbers.end()) {
+           data->components.push_back(
+            ftxui::Toggle(&text.entries, (int *)(&It->second)));
+        } else {
+            throw std::runtime_error("Variable " + text.selected + " not found");
+        }
     }
 
     void operator()(quick_ftxui_ast::nil const &text) const {
@@ -442,14 +463,14 @@ struct parser
 
         identifier =
                 !qi::lexeme[!(alnum | '_')]
-            >>  raw[qi::lexeme[(alpha | '_') >> *(alnum | '_')]]
+                >> raw[qi::lexeme[(alpha | '_') >> *(alnum | '_')]]
             ;
 
         button_function =
             qi::lit("System") >> "(" >> quoted_string >> ")" | quoted_string;
 
         button_comp %= qi::lit("Button") >> '{' >> quoted_string >> ',' >>
-                       button_function >> -(',' >> buttonopt_kw) >> '}';
+                       button_function >> -(',' >> buttonopt_kw) >> -(',' >> identifier) >> '}';
 
         input_comp %= qi::lit("Input") >> '{' >> quoted_string >> ',' >>
                       identifier >> '}';
@@ -459,10 +480,10 @@ struct parser
                        qi::int_ >> '}';
 
         menu_comp %= qi::lit("Menu") >> '{' >> '[' >> *quoted_string >> ']' >>
-                     ',' >> qi::int_ >> '}';
+                     ',' >> identifier >> '}';
 
         toggle_comp %= qi::lit("Toggle") >> '{' >> '[' >> *quoted_string >>
-                       ']' >> ',' >> qi::int_ >> '}';
+                       ']' >> ',' >> identifier >> '}';
 
         int_var_decl %= qi::lit("int") >> identifier >> -('=' > qi::int_);
 
