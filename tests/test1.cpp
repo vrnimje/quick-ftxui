@@ -19,7 +19,7 @@ auto parse_helper(std::string &&str) {
 }
 
 TEST_CASE("Parse Simple") {
-    //expect pass
+    // expect pass
     REQUIRE(parse_helper("Vertical{Button{\"amool\",\"bmpp\",Ascii}}"));
     REQUIRE(parse_helper("Vertical{Button{\"amool\",\"bmpp\",Simple}}"));
     REQUIRE(parse_helper("Vertical{Button{\"amool\",\"bmpp\",Animated}}"));
@@ -29,7 +29,8 @@ TEST_CASE("Parse Simple") {
     REQUIRE(parse_helper("Horizontal{Button{\"amool\",\"bmpp\",Simple}}"));
     REQUIRE(parse_helper("Horizontal{Button{\"amool\",\"bmpp\",Animated}}"));
     REQUIRE(parse_helper("Horizontal{Button{\"amool\",\"bmpp\"}}"));
-    REQUIRE(parse_helper("Horizontal{Button{\"amool\",System(\"mkdir dir1\")}}"));
+    REQUIRE(
+        parse_helper("Horizontal{Button{\"amool\",System(\"mkdir dir1\")}}"));
 
     REQUIRE(parse_helper("Vertical{Slider{\"amool\", 2, 5, 100, 1}}"));
     REQUIRE(parse_helper("Horizontal{Slider{\"amool\", 2, 5, 100, 1}}"));
@@ -50,13 +51,14 @@ TEST_CASE("Parse Simple") {
     REQUIRE(parse_helper("Vertical{Toggle{[\"Opt1\" \"Opt2\"], 0}}"));
     REQUIRE(parse_helper("Horizontal{Toggle{[\"Opt1\" \"Opt2\"], 0}}"));
 
-    //expect fail
+    // expect fail
     REQUIRE(!parse_helper("\"amool\"{Button{\"amool\",\"bmpp\",\"cmqq\"}}"));
     REQUIRE(!parse_helper("\"amool\"{Button{\"amool\",\"bmpp\",Ascii}}"));
     REQUIRE(!parse_helper("\"amool\"{_Button{\"amool\",\"bmpp\",Ascii}"));
     REQUIRE(!parse_helper("Vertical{_Button{\"amool\",\"bmpp\",Ascii}_}"));
     REQUIRE(!parse_helper("Horizontal{Button{\"amool\",system(\"ls\")}}"));
-    REQUIRE(!parse_helper("Vertical{Slider{\"amool\",\"bmpp\",\"cmqq\",\"dmrr\",\"emss\"}}"));
+    REQUIRE(!parse_helper(
+        "Vertical{Slider{\"amool\",\"bmpp\",\"cmqq\",\"dmrr\",\"emss\"}}"));
     REQUIRE(!parse_helper("Horizontal_{_Button{\"amool\",\"bmpp\",Simple}_}"));
     REQUIRE(!parse_helper("\"amool\"{Button{\"amool,\"bmpp\",Simple}}"));
     REQUIRE(!parse_helper("Vertical{Button{\"amool\" . \"bmpp\" . Ascii}}"));

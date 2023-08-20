@@ -91,6 +91,10 @@ target_link_libraries(quick-ftxui
     PRIVATE ftxui::component # Not needed for this example.
 )
 
+if (QUICK_FTXUI_EXAMPLES)
+    add_subdirectory(cpp_examples)
+endif()
+
 if(WIN32)
 else()
     target_compile_options(quick-ftxui PRIVATE -fsanitize=address)

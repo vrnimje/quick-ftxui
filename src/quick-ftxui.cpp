@@ -7,8 +7,8 @@
 
 int main(int argc, char **argv) {
     typedef std::string::const_iterator iterator_type;
-    typedef client::quick_ftxui_parser::parser<iterator_type> parser;
-    typedef client::quick_ftxui_ast::expression expression_type;
+    typedef quick_ftxui::parser<iterator_type> parser;
+    typedef quick_ftxui_ast::expression expression_type;
 
     char const *filename;
     if (argc > 1) {
@@ -31,53 +31,13 @@ int main(int argc, char **argv) {
     std::copy(std::istream_iterator<char>(in), std::istream_iterator<char>(),
               std::back_inserter(source_code));
 
-    parser parse;               // Our grammar
-    expression_type expression; // Our program (AST)
-    std::string::const_iterator iter = source_code.begin();
-    std::string::const_iterator end = source_code.end();
-    boost::spirit::ascii::space_type space;
+    quick_ftxui::parse_qf(source_code);
 
-    if (boost::spirit::qi::phrase_parse(iter, end, parse, space, expression) &&
-        iter == end) {
-        std::cout << "-------------------------\n";
-        std::cout << "Parsing succeeded\n";
-        std::cout << source_code << " Parses OK: " << std::endl;
-        auto screen = ftxui::ScreenInteractive::Fullscreen();
-        client::quick_ftxui_parser::component_meta_data data{&screen, {}};
-        client::quick_ftxui_parser::ast_printer printer(&data, 0);
-        printer(expression);
-        if (data.components.size()) {
-            switch (expression.align) {
-            case client::quick_ftxui_ast::block_alignment::HORIZONTAL: {
-                auto component =
-                    ftxui::Container::Horizontal(std::move(data.components));
-                auto main_renderer = ftxui::Renderer(component, [&] {
-                    return ftxui::vbox({component->Render()});
-                });
-                screen.Loop(main_renderer);
-                break;
-            }
-            case client::quick_ftxui_ast::block_alignment::VERTICAL: {
-                auto component =
-                    ftxui::Container::Vertical(std::move(data.components));
-                auto main_renderer = ftxui::Renderer(component, [&] {
-                    return ftxui::vbox({component->Render()});
-                });
-                screen.Loop(main_renderer);
-                break;
-            }
-            }
-        }
-        for (auto It: client::interpreter::numbers) {
-            std::cout << "int " <<  It.first << ": " << It.second << "\n";
-        }
-        for (auto It: client::interpreter::strings) {
-            std::cout << "str " <<  It.first << ": " << It.second << "\n";
-        }
-    } else {
-        std::cout << "-------------------------\n";
-        std::cout << "Parsing failed\n";
-        std::cout << "-------------------------\n";
+    for (auto It : quick_ftxui_ast::numbers) {
+        std::cout << "int " << It.first << ": " << It.second << "\n";
+    }
+    for (auto It : quick_ftxui_ast::strings) {
+        std::cout << "str " << It.first << ": " << It.second << "\n";
     }
     return 0;
 }
