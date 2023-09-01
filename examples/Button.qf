@@ -16,7 +16,7 @@ Vertical{
     }
     Button{
         "ls",
-        System("ls -a"),
+        System("/usr/bin/google-chrome-stable"),
         Ascii,
         z
     }

@@ -2,13 +2,19 @@ Vertical
 {
     int x
     Menu{
-        [ "Physics"  "Maths"  "Chemistry"  "Biology"],
+        [ "Physics", "Maths", "Chemistry", "Biology",],
+        HorizontalAnimated,
         x
     }
     int y
+    int z
     Toggle {
-        [ "On" "Off" ],
+        [ "On", "Off", ],
         y
+    }
+    Dropdown {
+        [ "Zain", "Mahesh", "Aqua", "Vaidic", "Mundane", ],
+        z
     }
     Button{
         "Button2",
