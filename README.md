@@ -1,6 +1,6 @@
 # Quick-FTXUI
 
-A *Quick*, easy way to render terminal user interfaces, using FTXUI.
+A *Quick* & Easy way to render terminal user interfaces, using FTXUI.
 
 ## Example
 
@@ -46,7 +46,8 @@ Vertical{
 
 ### Output
 
-![](./assets/Screencast-from-04-09-23-10_00_20-PM-IST.mp4)
+https://github.com/vrnimje/quick-ftxui/assets/103848930/0bc3b98d-a85f-415f-b002-9f15894a9ce2
+
 
 ## Features
 * #### Supports majority of FTXUI components, listed below:
