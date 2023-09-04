@@ -7,8 +7,8 @@ using namespace quick_ftxui;
 
 int main() {
 
-  add_int_var("x", 5);
-  add_str_var("y", "");
+  set_int_var("x", 5);
+  set_str_var("y", "");
   string source_code = R"(Vertical{
         str z = "init"
         str a

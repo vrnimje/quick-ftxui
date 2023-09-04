@@ -13,7 +13,7 @@ Vertical
         y
     }
     Dropdown {
-        [ "Zain", "Mahesh", "Aqua", "Vaidic", "Mundane", ],
+        [ "Zain", "Mahesh", "Alqama", "Vaidic", "Mundane", "Advait", ],
         z
     }
     Button{

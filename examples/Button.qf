@@ -3,22 +3,18 @@ Vertical{
     str y = "Test"
     str z = "init"
     str a
-    Input {
-        "Type something...",
-        y
-    }
-    Slider {
-        "Test: ",
-        x,
-        0,
-        100,
-        2
-    }
-    Button{
-        "ls",
-        System("/usr/bin/google-chrome-stable"),
-        Ascii,
+    Horizontal {
+        Button {
+        "ls -l",
+        System("ls -l"),
+        Animated,
         z
+        }
+        Button{
+            "chrome",
+            System("/usr/bin/google-chrome-stable"),
+            z
+        }
     }
     Button {
         "Exit",

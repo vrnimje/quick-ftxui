@@ -270,8 +270,8 @@ struct node_printer : boost::static_visitor<> {
   }
 
   void operator()(quick_ftxui_ast::button const &text) const {
-    tab(indent + tabsize);
-    std::cout << "button: " << text << std::endl;
+    // tab(indent + tabsize);
+    // std::cout << "button: " << text << std::endl;
 
     ftxui::ButtonOption button_opt;
 
@@ -371,8 +371,8 @@ struct node_printer : boost::static_visitor<> {
   }
 
   void operator()(quick_ftxui_ast::slider const &text) const {
-    tab(indent + tabsize);
-    std::cout << "slider: " << text << std::endl;
+    // tab(indent + tabsize);
+    // std::cout << "slider: " << text << std::endl;
 
     if (auto It = quick_ftxui_ast::numbers.find(std::string(text.value));
         It != quick_ftxui_ast::numbers.end()) {
@@ -385,8 +385,8 @@ struct node_printer : boost::static_visitor<> {
   }
 
   void operator()(quick_ftxui_ast::input const &text) const {
-    tab(indent + tabsize);
-    std::cout << "input: " << text << std::endl;
+    // tab(indent + tabsize);
+    // std::cout << "input: " << text << std::endl;
 
     if (auto It = quick_ftxui_ast::strings.find(std::string(text.value));
         It != quick_ftxui_ast::strings.end()) {
@@ -412,7 +412,7 @@ struct node_printer : boost::static_visitor<> {
   }
 
   void operator()(quick_ftxui_ast::menu const &text) const {
-    tab(indent + tabsize);
+    // tab(indent + tabsize);
 
     ftxui::MenuOption option;
 
@@ -448,7 +448,7 @@ struct node_printer : boost::static_visitor<> {
   }
 
   void operator()(quick_ftxui_ast::toggle const &text) const {
-    tab(indent + tabsize);
+    // tab(indent + tabsize);
     if (auto It = quick_ftxui_ast::numbers.find(std::string(text.selected));
         It != quick_ftxui_ast::numbers.end()) {
       data->components.push_back(
@@ -459,7 +459,7 @@ struct node_printer : boost::static_visitor<> {
   }
 
   void operator()(quick_ftxui_ast::dropdown const &text) const {
-    tab(indent + tabsize);
+    // tab(indent + tabsize);
     if (auto It = quick_ftxui_ast::numbers.find(std::string(text.selected));
         It != quick_ftxui_ast::numbers.end()) {
       data->components.push_back(
@@ -470,22 +470,22 @@ struct node_printer : boost::static_visitor<> {
   }
 
   void operator()(quick_ftxui_ast::nil const &text) const {
-    tab(indent + tabsize);
-    std::cout << "nil: \"" << text << '"' << std::endl;
+    // tab(indent + tabsize);
+    // std::cout << "nil: \"" << text << '"' << std::endl;
   }
 
   void operator()(quick_ftxui_ast::int_variable_decl const &text) const {
-    tab(indent + tabsize);
+    // tab(indent + tabsize);
 
     quick_ftxui_ast::numbers.insert_or_assign(text.identifier, text.value);
-    std::cout << "Integer variable decl: " << text << std::endl;
+    // std::cout << "Integer variable decl: " << text << std::endl;
   }
 
   void operator()(quick_ftxui_ast::str_variable_decl const &text) const {
-    tab(indent + tabsize);
+    // tab(indent + tabsize);
 
     quick_ftxui_ast::strings.insert_or_assign(text.identifier, text.value);
-    std::cout << "String variable decl: " << text << std::endl;
+    // std::cout << "String variable decl: " << text << std::endl;
   }
 
   int indent;
@@ -493,18 +493,18 @@ struct node_printer : boost::static_visitor<> {
 };
 
 void ast_printer::operator()(quick_ftxui_ast::expression const &expr) const {
-  tab(indent);
-  std::cout << "tag: "
-            << "Node | Alignment: " << expr.align << std::endl;
-  tab(indent);
-  std::cout << '{' << std::endl;
+  // tab(indent);
+  // std::cout << "tag: "
+  //           << "Node | Alignment: " << expr.align << std::endl;
+  // tab(indent);
+  // std::cout << '{' << std::endl;
 
   for (quick_ftxui_ast::node const &node : expr.expr) {
     boost::apply_visitor(node_printer(data, indent), node);
   }
 
-  tab(indent);
-  std::cout << '}' << std::endl;
+  // tab(indent);
+  // std::cout << '}' << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -650,9 +650,9 @@ void parse_qf(std::string source_code) {
 
   if (boost::spirit::qi::phrase_parse(iter, end, parse, space, expression) &&
       iter == end) {
-    std::cout << "-------------------------\n";
-    std::cout << "Parsing succeeded\n";
-    std::cout << source_code << " Parses OK: " << std::endl;
+    // std::cout << "-------------------------\n";
+    // std::cout << "Parsing succeeded\n";
+    // std::cout << source_code << " Parses OK: " << std::endl;
     auto screen = ftxui::ScreenInteractive::Fullscreen();
     quick_ftxui::component_meta_data data{&screen, {}};
     quick_ftxui::ast_printer printer(&data, 0);
@@ -677,9 +677,7 @@ void parse_qf(std::string source_code) {
       }
     }
   } else {
-    std::cout << "-------------------------\n";
-    std::cout << "Parsing failed\n";
-    std::cout << "-------------------------\n";
+    throw std::runtime_error("Parsing failed\n");
   }
 }
 
@@ -694,7 +692,7 @@ int get_int(std::string var_name) {
   }
 }
 
-void add_int_var(std::string var_name, int init_value) {
+void set_int_var(std::string var_name, int init_value) {
   if (auto It = quick_ftxui_ast::numbers.find(var_name);
       It != quick_ftxui_ast::numbers.end()) {
     throw std::runtime_error("Integer variable with name " + var_name +
@@ -715,7 +713,7 @@ std::string get_str(std::string var_name) {
   }
 }
 
-void add_str_var(std::string var_name, std::string init_value) {
+void set_str_var(std::string var_name, std::string init_value) {
   if (auto It = quick_ftxui_ast::strings.find(var_name);
       It != quick_ftxui_ast::strings.end()) {
     throw std::runtime_error("Integer variable with name " + var_name +
