@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="./assets/qf-high-resolution-color-logo.png"></img>
+    <img src="./assets/qf-high-resolution-color-logo.png" height=150 width=200></img>
     <h1>Quick-FTXUI</h1>
     <h3>A <i>Quick</i> & Easy way to render terminal user interfaces, using FTXUI.</h3>
 </div>
