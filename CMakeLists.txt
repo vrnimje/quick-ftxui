@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 project(quick-ftxui
     LANGUAGES CXX
-    VERSION 0.0.1
+    VERSION 0.1.0
 )
 
 set(CMAKE_CXX_STANDARD_REQUIRED 17)
@@ -88,7 +88,7 @@ target_link_libraries(quick-ftxui
     PRIVATE ${Boost_LIBRARIES}
     PRIVATE ftxui::screen
     PRIVATE ftxui::dom
-    PRIVATE ftxui::component # Not needed for this example.
+    PRIVATE ftxui::component
 )
 
 if (QUICK_FTXUI_EXAMPLES)

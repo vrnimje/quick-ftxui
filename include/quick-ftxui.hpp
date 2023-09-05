@@ -311,7 +311,7 @@ struct node_printer : boost::static_visitor<> {
                 std::filesystem::temp_directory_path().string();
             std::string x = text.func + " 2>>" + temp_path + "/quick-ftxui-" +
                             std::to_string(pid) + ".txt 1>&2";
-            
+
             {
               // Direct stdout & sterr to a temp file
               std::unique_ptr<FILE, decltype(&pclose)> pipe(
@@ -594,18 +594,18 @@ struct parser
     menu_comp %= qi::lit("Menu") >> '{' >> '[' >> +(quoted_string >> ',') >>
                  ']' >> -(',' >> menuopt_kw) >> ',' >> identifier >> '}';
 
-    toggle_comp %= qi::lit("Toggle") >> '{' >> '[' >> +(quoted_string >> ',') >> ']' >>
-                   ',' >> identifier >> '}';
+    toggle_comp %= qi::lit("Toggle") >> '{' >> '[' >> +(quoted_string >> ',') >>
+                   ']' >> ',' >> identifier >> '}';
 
-    drpdwn_comp %= qi::lit("Dropdown") >> '{' >> '[' >> +(quoted_string >> ',') >> ']' >>
-                   ',' >> identifier >> '}';
+    drpdwn_comp %= qi::lit("Dropdown") >> '{' >> '[' >>
+                   +(quoted_string >> ',') >> ']' >> ',' >> identifier >> '}';
 
     int_var_decl %= qi::lit("int") >> identifier >> -('=' > qi::int_);
 
     str_var_decl %= qi::lit("str") >> identifier >> -('=' > quoted_string);
 
-    node = button_comp | input_comp | slider_comp | menu_comp | toggle_comp | drpdwn_comp |
-           int_var_decl | str_var_decl | expression;
+    node = button_comp | input_comp | slider_comp | menu_comp | toggle_comp |
+           drpdwn_comp | int_var_decl | str_var_decl | expression;
 
     expression = alignment_kw >> '{' >> *node >> '}';
 
@@ -622,7 +622,8 @@ struct parser
   qi::rule<Iterator, quick_ftxui_ast::input(), ascii::space_type> input_comp;
   qi::rule<Iterator, quick_ftxui_ast::menu(), ascii::space_type> menu_comp;
   qi::rule<Iterator, quick_ftxui_ast::toggle(), ascii::space_type> toggle_comp;
-  qi::rule<Iterator, quick_ftxui_ast::dropdown(), ascii::space_type> drpdwn_comp;
+  qi::rule<Iterator, quick_ftxui_ast::dropdown(), ascii::space_type>
+      drpdwn_comp;
   qi::rule<Iterator, std::string(), ascii::space_type> quoted_string;
   qi::rule<Iterator, std::string(), ascii::space_type> button_function;
   qi::rule<Iterator, quick_ftxui_ast::slider(), ascii::space_type> slider_comp;
