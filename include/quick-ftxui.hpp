@@ -314,8 +314,8 @@ struct node_printer : boost::static_visitor<> {
 
             {
               // Direct stdout & sterr to a temp file
-              std::unique_ptr<FILE, decltype(&pclose)> pipe(
-                  popen(x.c_str(), "r"), pclose);
+              std::unique_ptr<FILE, decltype(&_pclose)> _pipe(
+                  _popen(x.c_str(), "r"), _pclose);
             }
             if (auto It =
                     quick_ftxui_ast::strings.find(std::string(text.output));
