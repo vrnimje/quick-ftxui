@@ -510,6 +510,8 @@ void ast_printer::operator()(quick_ftxui_ast::expression const &expr) const {
 ///////////////////////////////////////////////////////////////////////////////
 //  The error handler
 ///////////////////////////////////////////////////////////////////////////////
+
+// clang-format off
 struct error_handler_ {
   template <typename, typename, typename> struct result {
     typedef void type;
@@ -526,6 +528,8 @@ struct error_handler_ {
 };
 
 function<error_handler_> const error_handler = error_handler_();
+
+// clang-format on
 
 template <typename Iterator>
 struct parser
