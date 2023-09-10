@@ -48,8 +48,7 @@ Vertical{
 
 ### Output
 
-https://github.com/vrnimje/quick-ftxui/assets/103848930/0bc3b98d-a85f-415f-b002-9f15894a9ce2
-
+https://github.com/vrnimje/quick-ftxui/assets/103848930/c0d92edb-79fe-434d-9d72-0a577f617ed5
 
 ## Features
 * #### Supports majority of FTXUI components, listed below:
