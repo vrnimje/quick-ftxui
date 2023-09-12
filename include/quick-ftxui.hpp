@@ -109,8 +109,7 @@ typedef boost::variant<
     nil, boost::recursive_wrapper<button>, boost::recursive_wrapper<input>,
     boost::recursive_wrapper<slider>, boost::recursive_wrapper<menu>,
     boost::recursive_wrapper<toggle>, boost::recursive_wrapper<dropdown>,
-    boost::recursive_wrapper<expression>,
-    boost::recursive_wrapper<dom_text>,
+    boost::recursive_wrapper<expression>, boost::recursive_wrapper<dom_text>,
     boost::recursive_wrapper<separator>,
     boost::recursive_wrapper<int_variable_decl>,
     boost::recursive_wrapper<str_variable_decl>>
@@ -588,7 +587,10 @@ struct node_printer : boost::static_visitor<> {
   void operator()(quick_ftxui_ast::dom_text const &text) const {
     // tab(indent + tabsize);
     // std::cout << "nil: \"" << text << '"' << std::endl;
-    data->components.push_back(ftxui::Renderer([&] {return (ftxui::text(text.content) | ftxui::color(quick_ftxui_ast::resolveColour(text.color)));  }));
+    data->components.push_back(ftxui::Renderer([&] {
+      return (ftxui::text(text.content) |
+              ftxui::color(quick_ftxui_ast::resolveColour(text.color)));
+    }));
   }
 
   void operator()(quick_ftxui_ast::separator const &text) const {
@@ -596,25 +598,30 @@ struct node_printer : boost::static_visitor<> {
     // std::cout << "nil: \"" << text << '"' << std::endl;
 
     switch (text.style) {
-      case quick_ftxui_ast::sep_style::Normal: 
-        data->components.push_back(ftxui::Renderer([&] {return ftxui::separator(); }));
-        break;
-      
-      case quick_ftxui_ast::sep_style::Light: 
-        data->components.push_back(ftxui::Renderer([&] {return ftxui::separatorLight(); }));
-        break;
-      case quick_ftxui_ast::sep_style::Dashed: 
-        data->components.push_back(ftxui::Renderer([&] {return ftxui::separatorDashed(); }));
-        break;
-      case quick_ftxui_ast::sep_style::Double:
-        data->components.push_back(ftxui::Renderer([&] {return ftxui::separatorDouble(); }));
-        break;
-      case quick_ftxui_ast::sep_style::Heavy: {
-        data->components.push_back(ftxui::Renderer([&] {return ftxui::separatorHeavy(); }));
-        break;
-      }
-      default: 
-        throw std::runtime_error("Should not reach here");
+    case quick_ftxui_ast::sep_style::Normal:
+      data->components.push_back(
+          ftxui::Renderer([&] {   return ftxui::separator(); }));
+      break;
+
+    case quick_ftxui_ast::sep_style::Light:
+      data->components.push_back(
+          ftxui::Renderer([&] {   return ftxui::separatorLight(); }));
+      break;
+    case quick_ftxui_ast::sep_style::Dashed:
+      data->components.push_back(
+          ftxui::Renderer([&] {   return ftxui::separatorDashed(); }));
+      break;
+    case quick_ftxui_ast::sep_style::Double:
+      data->components.push_back(
+          ftxui::Renderer([&] {   return ftxui::separatorDouble(); }));
+      break;
+    case quick_ftxui_ast::sep_style::Heavy: {
+      data->components.push_back(
+          ftxui::Renderer([&] {   return ftxui::separatorHeavy(); }));
+      break;
+    }
+    default:
+      throw std::runtime_error("Should not reach here");
     }
   }
 
@@ -787,7 +794,8 @@ struct parser
     sep_comp %= -(sep_kw) >> qi::lit("separator");
 
     node = button_comp | input_comp | slider_comp | menu_comp | toggle_comp |
-           drpdwn_comp | int_var_decl | str_var_decl | text_comp | sep_comp | expression;
+           drpdwn_comp | int_var_decl | str_var_decl | text_comp | sep_comp |
+           expression;
 
     expression = alignment_kw >> '{' >> *node >> '}';
 
