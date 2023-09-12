@@ -596,7 +596,7 @@ struct node_printer : boost::static_visitor<> {
   void operator()(quick_ftxui_ast::separator const &text) const {
     // tab(indent + tabsize);
     // std::cout << "nil: \"" << text << '"' << std::endl;
-
+    // clang-format off
     switch (text.style) {
     case quick_ftxui_ast::sep_style::Normal:
       data->components.push_back(
@@ -623,6 +623,7 @@ struct node_printer : boost::static_visitor<> {
     default:
       throw std::runtime_error("Should not reach here");
     }
+    // clang-format on
   }
 
   void operator()(quick_ftxui_ast::int_variable_decl const &text) const {
