@@ -175,7 +175,7 @@ TEST_CASE("Parse Recursive") {
 }
 
 TEST_CASE("Parse DOM elements") {
-    REQUIRE(parse_helper("Vertical {\
+  REQUIRE(parse_helper("Vertical {\
         Text(\"Hello World\")       \
         separator                   \
         Paragraph(\"Hello to his paragraph\")\
@@ -184,8 +184,8 @@ TEST_CASE("Parse DOM elements") {
         }\
     }"));
 
-    // Parse text and its styles
-    REQUIRE(parse_helper("Vertical {\
+  // Parse text and its styles
+  REQUIRE(parse_helper("Vertical {\
         Blue Text(\"Hello World\")  \
         Red bold Text(\"amool\")    \
         dim Text(\"bmpp\")          \
@@ -196,7 +196,7 @@ TEST_CASE("Parse DOM elements") {
         strikethrough Text(\"This is strikethrough\")   \
     }"));
 
-    REQUIRE(!parse_helper("Vertical {\
+  REQUIRE(!parse_helper("Vertical {\
         blue Text(\"Hello World\")  \
         Bold Red Text(\"amool\")    \
         DIM Text(\"bmpp\")          \
@@ -207,8 +207,8 @@ TEST_CASE("Parse DOM elements") {
         strikethrough Text(\"This is strikethrough\")   \
     }"));
 
-    // Paragraphs, separators and borders
-    REQUIRE(parse_helper("HeavyBorder Vertical {\
+  // Paragraphs, separators and borders
+  REQUIRE(parse_helper("HeavyBorder Vertical {\
         Paragraph(\"I guess I should have talked before going into the unknown\")\
         separator   \
         Paragraph(\"Lorem ipsum dolor sit amet, consectetur adipiscing elit,    \
@@ -224,8 +224,8 @@ TEST_CASE("Parse DOM elements") {
             Paragraph(\"This is my peace offering.\")     \
         }\
     }"));
-    
-    REQUIRE(!parse_helper("Heavy Border Vertical {\
+
+  REQUIRE(!parse_helper("Heavy Border Vertical {\
         Paragraph(\"I guess I should have talked before going into the unknown\")\
         separator   \
         Paragraph(\"Lorem ipsum dolor sit amet, consectetur adipiscing elit,    \
@@ -242,7 +242,7 @@ TEST_CASE("Parse DOM elements") {
 }
 
 TEST_CASE("Parse Components and DOM together") {
-    REQUIRE(parse_helper("HeavyBorder Vertical {\
+  REQUIRE(parse_helper("HeavyBorder Vertical {\
         int x                                   \
         Blue Slider{                            \
             \"amool\",                          \
@@ -263,7 +263,7 @@ TEST_CASE("Parse Components and DOM together") {
         }                                       \
     }"));
 
-    REQUIRE(parse_helper("DashedBorder Vertical{\
+  REQUIRE(parse_helper("DashedBorder Vertical{\
         int x                                   \
         Blue Dropdown{                          \
             [\"amool\", \"bmpp\", \"cmqq\",],   \
@@ -282,7 +282,7 @@ TEST_CASE("Parse Components and DOM together") {
         }                                       \
     }"));
 
-    REQUIRE(!parse_helper("Heavy Border Vertical {\
+  REQUIRE(!parse_helper("Heavy Border Vertical {\
         int x                                   \
         Blue Slider{                            \
             \"amool\",                          \
