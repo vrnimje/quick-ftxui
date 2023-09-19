@@ -53,7 +53,7 @@ DoubleBorder Vertical{
 
 ### Output
 
-https://github.com/vrnimje/quick-ftxui/assets/103848930/c0d92edb-79fe-434d-9d72-0a577f617ed5
+https://github.com/vrnimje/quick-ftxui/assets/103848930/715c821b-b259-4e2b-ab25-2484ad3c47c1
 
 ## Features
 * #### Supports majority of FTXUI components, listed below:
