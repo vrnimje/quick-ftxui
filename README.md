@@ -9,23 +9,26 @@
 It converts this JSON-like [code](./examples/multiple_components.qf) into a TUI
 
 ```
-Vertical{
+DoubleBorder Vertical{
     str x
+    Red underlined Text("This opens firefox")
     Blue Button{
         "Open firefox",
         System("/usr/bin/firefox"),
         Animated,
         x
     }
+    Light separator
     int y = 20
     Yellow Slider {
-        "A Slider",
+        "A Slider: ",
         y,
         0,
         100,
         1
     }
-    Horizontal {
+    separator
+    RoundedBorder Horizontal {
         int z = 1
         int w
         Red Dropdown {
@@ -37,6 +40,8 @@ Vertical{
             w
         }
     }
+
+    Dashed separator
 
     RedLight Button {
         "Exit",
