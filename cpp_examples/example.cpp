@@ -6,16 +6,15 @@ using namespace std;
 using namespace quick_ftxui;
 
 int main() {
-
-  set_int_var("x", 5);
-  set_str_var("y", "");
-  string source_code = R"(Vertical{
+  int x = 5;
+  set_int_var("x", &x);
+  set_str_var("y");
+  string source_code = R"(DashedBorder Vertical{
         str z = "init"
         str a
         int o = 0
         Input {
             "Type something...",
-            Password,
             y
         }
         RedLight Slider {
@@ -26,12 +25,12 @@ int main() {
             2
         }
         Magenta Button{
-            "ls",
+            "Chrome",
             System("/usr/bin/google-chrome-stable"),
-            Ascii,
+            Animated,
             z
         }
-        Menu{
+        Green Menu{
             [ "Physics",  "Maths",  "Chemistry",  "Biology",],
             VerticalAnimated,
             o
@@ -44,7 +43,7 @@ int main() {
 
   parse_qf(source_code);
 
-  cout << "x is: " << get_int("x") << "\n";
+  cout << "x is: " << x << "\n";
   cout << "y is: " << get_str("y") << "\n";
   cout << "o is: " << get_int("o") << "\n";
   cout << "z is: " << get_str("z") << "\n";
