@@ -248,7 +248,7 @@ ninja
 
 - [x] Adding color (component wise)
 - [x] Adding FTXUI DOM elements (like seperator, border)
-- [ ] Adding a way to use C++ defined variables directly, instead of depending on script-variables 
+- [x] Adding a way to use C++ defined variables directly, instead of depending on script-variables 
 - [ ] Adding detailed user documentation
 
 ## Dependencies
