@@ -31,8 +31,6 @@ std::map<std::string, int> numbers;
 std::map<std::string, std::string> strings;
 
 std::map<int *, std::string> ref_nums;
-
-std::map<int *, std::string> ref_nums;
 std::map<std::string *, std::string> ref_strs;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -1169,16 +1167,6 @@ void set_str_var(std::string var_name, std::string init_value) {
                              " already exists, please use another name");
   } else {
     quick_ftxui_ast::strings.insert({var_name, init_value});
-  }
-}
-
-void set_str_var(std::string var_name) {
-  if (auto It = quick_ftxui_ast::strings.find(var_name);
-      It != quick_ftxui_ast::strings.end()) {
-    throw std::runtime_error("Integer variable with name " + var_name +
-                             " already exists, please use another name");
-  } else {
-    quick_ftxui_ast::strings.insert({var_name, ""});
   }
 }
 
