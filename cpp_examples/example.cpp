@@ -7,9 +7,10 @@ using namespace quick_ftxui;
 
 int main() {
   int x = 5;
+  string y = "Init value";
   set_int_var("x", &x);
-  set_str_var("y");
-  string source_code = R"(DashedBorder Vertical{
+  set_str_var("y", &y);
+  string source_code = R"(Border Vertical{
         str z = "init"
         str a
         int o = 0
@@ -43,8 +44,8 @@ int main() {
 
   parse_qf(source_code);
 
-  cout << "x is: " << x << "\n";
-  cout << "y is: " << get_str("y") << "\n";
-  cout << "o is: " << get_int("o") << "\n";
-  cout << "z is: " << get_str("z") << "\n";
+  cout << "Slider value is: " << x << "\n";
+  cout << "User input is: " << y << "\n";
+  cout << "Option no. selected in Menu is: " << get_int("o") + 1 << "\n";
+  cout << "Chrome debug msgs are: " << get_str("z") << "\n";
 }
