@@ -573,7 +573,8 @@ struct node_printer : boost::static_visitor<> {
       };
       switch (text.opt) {
       case quick_ftxui_ast::input_option::None:
-        data->components.push_back(ftxui::Input(&It->second, text.placeholder, pass));
+        data->components.push_back(
+            ftxui::Input(&It->second, text.placeholder, pass));
         break;
 
       case quick_ftxui_ast::input_option::Password:
