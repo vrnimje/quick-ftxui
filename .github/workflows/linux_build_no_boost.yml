@@ -2,7 +2,7 @@ name: Linux Build Boost Fetch
 
 on:
   push:
-    branches: [ master, fix_ci ]
+    branches: [ master ]
     paths:
       - ".github/workflows/linux_build_no_boost.yml"
       - "include/**"
@@ -39,7 +39,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install g++-10/clang++-12
+    - name: Install CXX compiler
       run: sudo apt-get install -y ${{matrix.compiler}}
        
     - name: Configure CMake
