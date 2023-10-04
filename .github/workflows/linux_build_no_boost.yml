@@ -2,7 +2,7 @@ name: Linux Build Boost Fetch
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, fix_ci ]
     paths:
       - ".github/workflows/linux_build_no_boost.yml"
       - "include/**"
@@ -38,6 +38,9 @@ jobs:
       CMAKE_PREFIX_PATH: ${{github.workspace}}/.local
     steps:
     - uses: actions/checkout@v2
+
+    - name: Install g++-10/clang++-12
+      run: sudo apt-get install -y ${{matrix.compiler}}
        
     - name: Configure CMake
       run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DQUICK_FTXUI_FETCH_BOOST=ON
