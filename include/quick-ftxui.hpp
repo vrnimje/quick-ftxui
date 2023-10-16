@@ -7,10 +7,10 @@
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/recursive_variant.hpp>
 
-#include "ftxui/component/component.hpp"      // for Components
-#include "ftxui/component/component_base.hpp" // for ComponentBase
-#include "ftxui/component/component_options.hpp" // for Options
-#include "ftxui/component/mouse.hpp"             // for ftxui
+#include "ftxui/component/component.hpp"          // for Components
+#include "ftxui/component/component_base.hpp"     // for ComponentBase
+#include "ftxui/component/component_options.hpp"  // for Options
+#include "ftxui/component/mouse.hpp"              // for ftxui
 #include "ftxui/component/screen_interactive.hpp" // for screen
 #include "ftxui/dom/elements.hpp" // for text, hbox, separator, Element, operator|, vbox, border
 #include "ftxui/screen/screen.hpp"
