@@ -127,7 +127,7 @@ https://github.com/vrnimje/quick-ftxui/assets/103848930/715c821b-b259-4e2b-ab25-
 
     <details><summary>Paragraph</summary>
 
-    Similar to text, but adapts to size of terminal windoe
+    Similar to text, but adapts to size of terminal window
 
     [Example](./examples/paragraph.qf)
 
