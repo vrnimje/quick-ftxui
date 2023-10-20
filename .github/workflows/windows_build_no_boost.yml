@@ -2,7 +2,7 @@ name: Windows Build Boost Fetch
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, fix_windows_ci ]
     paths:
       - ".github/workflows/windows_build_no_boost.yml"
       - "include/**"
