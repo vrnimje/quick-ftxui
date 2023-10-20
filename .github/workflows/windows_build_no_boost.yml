@@ -23,6 +23,7 @@ jobs:
     runs-on: windows-2022
     env:
       CMAKE_PREFIX_PATH: ${{ github.workspace }}\.local
+      SSL_CERT_DIR: HKEY_LOCAL_MACHINE\Software\Microsoft\SystemCertificates
     steps:
     - uses: actions/checkout@v2
 
