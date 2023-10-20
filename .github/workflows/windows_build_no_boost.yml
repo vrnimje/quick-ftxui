@@ -20,7 +20,7 @@ on:
 
 jobs:
   build:
-    runs-on: windows-19
+    runs-on: windows-2019
     env:
       CMAKE_PREFIX_PATH: ${{ github.workspace }}\.local
     steps:
