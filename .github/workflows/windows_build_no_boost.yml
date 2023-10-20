@@ -31,11 +31,11 @@ jobs:
 
     - name: Get GitHub SSL certificate
       run: |
-        echo "" | openssl s_client -servername github.com -connect github.com:443 2>NUL | openssl x509 > github.crt
+        echo "" | openssl s_client -servername github.com -connect github.com:443 2>NUL | openssl x509 > github.cer
 
     - name: Add GitHub SSL certificate to trusted store
       run: |
-        certutil -addstore -f "Root" github.crt
+        certutil -addstore -f "Root" github.cer
 
     - name: Configure CMake
       run: cmake -S . -B build "-DCMAKE_TOOLCHAIN_FILE=$env:VCPKG_INSTALLATION_ROOT\scripts\buildsystems\vcpkg.cmake" -DQUICK_FTXUI_FETCH_BOOST=ON
