@@ -2,6 +2,11 @@
     <img src="./assets/qf-high-resolution-color-logo.png" height=150 width=200></img>
     <h1>Quick-FTXUI</h1>
     <h3>A <i>Quick</i> & Easy way to render terminal user interfaces, using FTXUI.</h3>
+    <img src="https://github.com/vrnimje/quick-ftxui/actions/workflows/linux_build.yml/badge.svg">
+    <img src="https://github.com/vrnimje/quick-ftxui/actions/workflows/linux_build_no_boost.yml/badge.svg">
+    <img src="https://github.com/vrnimje/quick-ftxui/actions/workflows/windows_build_no_boost.yml/badge.svg">
+    <img src="https://github.com/vrnimje/quick-ftxui/actions/workflows/windows_build.yml/badge.svg">
+    
 </div>
 
 ## Example
