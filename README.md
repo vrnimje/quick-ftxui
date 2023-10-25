@@ -109,9 +109,17 @@ https://github.com/vrnimje/quick-ftxui/assets/103848930/715c821b-b259-4e2b-ab25-
 
     <details><summary>Radiobox</summary>
 
-    [Example](./examples/radiobox.qf#L5-8)
+    [Example](./examples/radio_check_box.qf#L5-8)
 
     ![](./assets/image-13.png)
+
+    </details>
+
+    <details><summary>Checkbox</summary>
+
+    [Example](./examples/radio_check_box.qf#L19-22)
+
+    ![](./assets/image-14.png)
 
     </details>
 
