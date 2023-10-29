@@ -2,12 +2,12 @@ name: Windows Build Boost Fetch
 
 on:
   push:
-    branches: [ master, win_rev_linux_fix ]
+    branches: [ master ]
     paths:
       - ".github/workflows/windows_build_no_boost.yml"
       - "include/**"
       - "src/**"
-      - "tests/**"
+      - "tests/**", win_rev_linux_fix
       - "CMakeLists.txt"
   pull_request:
     branches: [ master ]
