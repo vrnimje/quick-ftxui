@@ -27,12 +27,12 @@ jobs:
       matrix:
         cxx:
           - g++-10
-          - clang++-14
+          - clang++-12
         include:
           - cxx: g++-10
             compiler: g++-10
-          - cxx: clang++-14
-            compiler: clang++-14
+          - cxx: clang++-12
+            compiler: clang++-12
     env:
       CXX: ${{matrix.cxx}}
       CMAKE_PREFIX_PATH: ${{github.workspace}}/.local
