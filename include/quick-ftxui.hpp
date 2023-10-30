@@ -430,23 +430,28 @@ struct node_printer : boost::static_visitor<> {
       break;
 
     case quick_ftxui_ast::borders::LightBorder:
-      data->components.push_back(nest_comp | ftxui::borderStyled(ftxui::LIGHT, border_clr));
+      data->components.push_back(nest_comp |
+                                 ftxui::borderStyled(ftxui::LIGHT, border_clr));
       break;
 
     case quick_ftxui_ast::borders::DashedBorder:
-      data->components.push_back(nest_comp | ftxui::borderStyled(ftxui::DASHED, border_clr));
+      data->components.push_back(
+          nest_comp | ftxui::borderStyled(ftxui::DASHED, border_clr));
       break;
 
     case quick_ftxui_ast::borders::HeavyBorder:
-      data->components.push_back(nest_comp | ftxui::borderStyled(ftxui::HEAVY, border_clr));
+      data->components.push_back(nest_comp |
+                                 ftxui::borderStyled(ftxui::HEAVY, border_clr));
       break;
 
     case quick_ftxui_ast::borders::DoubleBorder:
-      data->components.push_back(nest_comp | ftxui::borderStyled(ftxui::DOUBLE, border_clr));
+      data->components.push_back(
+          nest_comp | ftxui::borderStyled(ftxui::DOUBLE, border_clr));
       break;
 
     case quick_ftxui_ast::borders::RoundedBorder:
-      data->components.push_back(nest_comp | ftxui::borderStyled(ftxui::ROUNDED, border_clr));
+      data->components.push_back(
+          nest_comp | ftxui::borderStyled(ftxui::ROUNDED, border_clr));
       break;
     default:
       throw std::runtime_error("Border options should not reach here");
@@ -1076,7 +1081,8 @@ struct parser
            str_var_decl | sep_comp | para_comp | skipper | expression |
            checkbox_comp;
 
-    expression = -(color_kw) >> -(border_kw) >> alignment_kw >> '{' >> *node >> '}';
+    expression =
+        -(color_kw) >> -(border_kw) >> alignment_kw >> '{' >> *node >> '}';
 
     // Debugging and error handling and reporting support.
     BOOST_SPIRIT_DEBUG_NODES((expression));
